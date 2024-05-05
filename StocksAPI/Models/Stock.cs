@@ -13,7 +13,7 @@ namespace StocksAPI.Models
         public decimal TotalInvestment { get; set; }
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int Id { get; set; }
+        public int? Id { get; set; }
         public decimal CurrentPrice { get; set; }
     }
 }
