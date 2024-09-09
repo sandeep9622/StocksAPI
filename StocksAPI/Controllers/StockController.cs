@@ -18,7 +18,7 @@ namespace StocksAPI.Controllers
         [HttpGet]
         public IActionResult Get()
         {
-            IEnumerable<Stock> Stocks = _dataRepository.GetAll();
+            IEnumerable<Stock> Stocks = _dataRepository.GetAll().OrderByDescending(s => s.TotalInvestment);
             return Ok(Stocks);
         }
         // GET: api/Stock/5
