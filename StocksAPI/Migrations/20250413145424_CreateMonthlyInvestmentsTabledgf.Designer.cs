@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using StocksAPI.Models;
 
@@ -11,9 +12,10 @@ using StocksAPI.Models;
 namespace StocksAPI.Migrations
 {
     [DbContext(typeof(StockAPIContext))]
-    partial class StockAPIContextModelSnapshot : ModelSnapshot
+    [Migration("20250413145424_CreateMonthlyInvestmentsTabledgf")]
+    partial class CreateMonthlyInvestmentsTabledgf
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

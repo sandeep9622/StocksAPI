@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using StocksAPI.Models;
 
@@ -11,9 +12,10 @@ using StocksAPI.Models;
 namespace StocksAPI.Migrations
 {
     [DbContext(typeof(StockAPIContext))]
-    partial class StockAPIContextModelSnapshot : ModelSnapshot
+    [Migration("20250413140814_CreateMonthlyInvestmentsTable")]
+    partial class CreateMonthlyInvestmentsTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -30,11 +32,17 @@ namespace StocksAPI.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
+                    b.Property<decimal>("Addition")
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<decimal>("Amount")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<DateTime>("MonthYear")
                         .HasColumnType("datetime2");
+
+                    b.Property<decimal>("PercentageChange")
+                        .HasColumnType("decimal(5,2)");
 
                     b.HasKey("Id");
 

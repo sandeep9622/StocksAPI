@@ -8,6 +8,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddDbContext<StockAPIContext>(opts => opts.UseSqlServer(builder.Configuration["ConnectionStrings:StocksDb"]));
 builder.Services.AddScoped<IDataRepository<Stock>,StockManager>();
+builder.Services.AddScoped<IDataRepository<MonthlyInvestment>, MonthlyInvestmentManager>();
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
