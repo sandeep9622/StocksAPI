@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security.Claims;
 
 namespace StocksAPI.Controllers
 {
@@ -24,11 +25,19 @@ namespace StocksAPI.Controllers
             _dataRepository = dataRepository;
         }
 
+        private string GetCurrentUserId()
+        {
+            return User.FindFirst(ClaimTypes.NameIdentifier)?.Value 
+                ?? throw new InvalidOperationException("User ID not found in token");
+        }
+
         // GET: api/monthly-investments
         [HttpGet]
         public IActionResult Get()
         {
+            var userId = GetCurrentUserId();
             IEnumerable<MonthlyInvestment> investments = _dataRepository.GetAll()
+                .Where(m => m.UserId == userId)
                 .OrderBy(m => m.MonthYear);
 
             return Ok(investments);
@@ -38,11 +47,19 @@ namespace StocksAPI.Controllers
         [HttpGet("{id}", Name = "GetInvestment")]
         public IActionResult Get(long id)
         {
+            var userId = GetCurrentUserId();
             MonthlyInvestment investment = _dataRepository.Get(id);
+
             if (investment == null)
             {
                 return NotFound("Monthly investment record not found.");
             }
+
+            if (investment.UserId != userId)
+            {
+                return Forbid();
+            }
+
             return Ok(investment);
         }
 
@@ -56,6 +73,7 @@ namespace StocksAPI.Controllers
             }
 
             var investments = new List<MonthlyInvestment>();
+            var userId = GetCurrentUserId();
 
             using (var stream = new MemoryStream())
             {
@@ -82,7 +100,7 @@ namespace StocksAPI.Controllers
                             continue;
                         }
 
-                        if (!DateTime.TryParse(dateStr, out DateTime monthYear) ||
+                        if (!DateTime.TryParse(dateStr, out DateTime monthYear) || 
                             !decimal.TryParse(amountStr, out decimal amount))
                         {
                             return BadRequest($"Invalid data format in row {row + 1}");
@@ -91,10 +109,15 @@ namespace StocksAPI.Controllers
                         var investment = new MonthlyInvestment
                         {
                             MonthYear = monthYear,
-                            Amount = amount
+                            Amount = amount,
+                            UserId = userId,
+                            CreatedAt = DateTime.UtcNow
                         };
 
-                        if (_dataRepository.GetAll().Any(m => m.MonthYear == investment.MonthYear))
+                        // Check for existing entry for this month and user
+                        if (_dataRepository.GetAll().Any(m => 
+                            m.MonthYear == investment.MonthYear && 
+                            m.UserId == userId))
                         {
                             return BadRequest($"Entry for {investment.MonthYear:MMMM yyyy} already exists.");
                         }
@@ -109,7 +132,7 @@ namespace StocksAPI.Controllers
                 _dataRepository.Add(investment);
             }
 
-            return Ok(investments);
+            return Ok(new { Count = investments.Count, Message = "Investments added successfully." });
         }
 
         // POST: api/monthly-investments/single
