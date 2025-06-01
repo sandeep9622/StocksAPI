@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using StocksAPI.Models;
 using StocksAPI.Models.Repository;
 
 namespace StocksAPI.Controllers
 {
+    [Authorize]
     [Route("api/stock")]
     [ApiController]
     public class StockController : ControllerBase

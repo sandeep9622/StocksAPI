@@ -1,11 +1,8 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
-
-
-//using NPOI.SS.UserModel;
-//using NPOI.XSSF.UserModel;
 using StocksAPI.Models;
 using StocksAPI.Models.Repository;
 using System;
@@ -15,6 +12,7 @@ using System.Linq;
 
 namespace StocksAPI.Controllers
 {
+    [Authorize]
     [Route("api/monthly-investments")]
     [ApiController]
     public class InvestmentController : ControllerBase
@@ -71,25 +69,38 @@ namespace StocksAPI.Controllers
                     IRow currentRow = sheet.GetRow(row);
                     if (currentRow == null) continue;
 
-                    if (currentRow.GetCell(0) != null && currentRow.GetCell(1) != null)
+                    var dateCell = currentRow.GetCell(0);
+                    var amountCell = currentRow.GetCell(1);
+
+                    if (dateCell != null && amountCell != null)
                     {
+                        var dateStr = Convert.ToString(dateCell);
+                        var amountStr = Convert.ToString(amountCell);
+
+                        if (string.IsNullOrEmpty(dateStr) || string.IsNullOrEmpty(amountStr))
+                        {
+                            continue;
+                        }
+
+                        if (!DateTime.TryParse(dateStr, out DateTime monthYear) ||
+                            !decimal.TryParse(amountStr, out decimal amount))
+                        {
+                            return BadRequest($"Invalid data format in row {row + 1}");
+                        }
+
                         var investment = new MonthlyInvestment
                         {
-                            MonthYear = DateTime.Parse(Convert.ToString(currentRow.GetCell(0))),
-                            Amount = decimal.Parse(Convert.ToString(currentRow.GetCell(1)))
-                            // Addition = decimal.Parse(currentRow.GetCell(2).ToString()),
-                            // PercentageChange = decimal.Parse(currentRow.GetCell(3).ToString())
+                            MonthYear = monthYear,
+                            Amount = amount
                         };
 
-                        // Additional validation for month/year uniqueness
                         if (_dataRepository.GetAll().Any(m => m.MonthYear == investment.MonthYear))
                         {
-                            return BadRequest($"Entry for {investment.MonthYear} already exists.");
+                            return BadRequest($"Entry for {investment.MonthYear:MMMM yyyy} already exists.");
                         }
 
                         investments.Add(investment);
                     }
-
                 }
             }
 
