@@ -17,6 +17,12 @@ namespace StocksAPI.Models
             {
                 entity.HasIndex(e => e.MonthYear).IsUnique();
                 entity.Property(e => e.MonthYear).HasColumnType("datetime2");
+                
+                entity.Property(e => e.CreatedAt)
+                    .HasDefaultValueSql("GETUTCDATE()");
+
+                entity.Property(e => e.UserId)
+                    .IsRequired();
             });
 
             modelBuilder.Entity<Stock>(entity =>
@@ -25,6 +31,12 @@ namespace StocksAPI.Models
                 entity.Property(e => e.CurrentPrice).HasColumnType("decimal(18,2)");
                 entity.Property(e => e.MarketCap).HasColumnType("decimal(18,2)");
                 entity.Property(e => e.TotalInvestment).HasColumnType("decimal(18,2)");
+                
+                entity.Property(e => e.CreatedAt)
+                    .HasDefaultValueSql("GETUTCDATE()");
+
+                entity.Property(e => e.UserId)
+                    .IsRequired();
             });
         }
     }

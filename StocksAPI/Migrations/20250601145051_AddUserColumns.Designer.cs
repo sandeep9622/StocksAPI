@@ -12,8 +12,8 @@ using StocksAPI.Models;
 namespace StocksAPI.Migrations
 {
     [DbContext(typeof(StockAPIContext))]
-    [Migration("20250601144028_AddUserIdToEntities")]
-    partial class AddUserIdToEntities
+    [Migration("20250601145051_AddUserColumns")]
+    partial class AddUserColumns
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -248,7 +248,9 @@ namespace StocksAPI.Migrations
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETUTCDATE()");
 
                     b.Property<DateTime>("MonthYear")
                         .HasColumnType("datetime2");
@@ -258,14 +260,12 @@ namespace StocksAPI.Migrations
 
                     b.Property<string>("UserId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("MonthYear")
                         .IsUnique();
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("MonthlyInvestments");
                 });
@@ -279,7 +279,9 @@ namespace StocksAPI.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETUTCDATE()");
 
                     b.Property<decimal>("CurrentPrice")
                         .HasColumnType("decimal(18,2)");
@@ -309,11 +311,9 @@ namespace StocksAPI.Migrations
 
                     b.Property<string>("UserId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("Stocks");
                 });
@@ -367,28 +367,6 @@ namespace StocksAPI.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("StocksAPI.Models.MonthlyInvestment", b =>
-                {
-                    b.HasOne("StocksAPI.Models.ApplicationUser", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("StocksAPI.Models.Stock", b =>
-                {
-                    b.HasOne("StocksAPI.Models.ApplicationUser", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
                 });
 #pragma warning restore 612, 618
         }
