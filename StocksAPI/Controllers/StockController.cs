@@ -18,6 +18,8 @@ namespace StocksAPI.Controllers
             _dataRepository = dataRepository;
         }
 
+
+
         private string GetCurrentUserId()
         {
             return User.FindFirst(ClaimTypes.NameIdentifier)?.Value 

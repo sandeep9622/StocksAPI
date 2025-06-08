@@ -37,10 +37,13 @@ namespace StocksAPI.Models.DataManager
             dbEntity.Price = entity.Price;
             dbEntity.Quantity = entity.Quantity;
             dbEntity.CurrentPrice = entity.CurrentPrice;
-            dbEntity.CurrentPrice = entity.CurrentPrice;
             dbEntity.MarketCap = entity.MarketCap;
             dbEntity.Sector = entity.Sector;
             dbEntity.StockName = entity.StockName;
+            dbEntity.TotalInvestment = entity.TotalInvestment;
+            dbEntity.OneYearReturns = entity.OneYearReturns;
+            dbEntity.ThreeYearReturns = entity.ThreeYearReturns;
+            dbEntity.FiveYearReturns = entity.FiveYearReturns;
             _context.SaveChanges();
         }
     }

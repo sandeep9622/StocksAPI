@@ -22,5 +22,11 @@ namespace StocksAPI.Models
                 return Math.Round(CurrentPrice * Quantity - TotalInvestment, 2);
             }
         }
+
+        public decimal? OneYearReturns { get; set; }
+
+        public decimal? ThreeYearReturns { get; set; }
+
+        public decimal? FiveYearReturns { get; set; }
     }
 }
