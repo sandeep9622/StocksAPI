@@ -143,9 +143,9 @@ namespace StocksAPI.Controllers
             {
                 return BadRequest("Investment data is null.");
             }
-
+            investment.UserId = GetCurrentUserId();
             // Additional validation for month/year uniqueness
-            if (_dataRepository.GetAll().Any(m => m.MonthYear == investment.MonthYear))
+            if (_dataRepository.GetAll().Any(m => m.MonthYear == investment.MonthYear && m.UserId == investment.UserId))
             {
                 return BadRequest($"Entry for {investment.MonthYear} already exists.");
             }

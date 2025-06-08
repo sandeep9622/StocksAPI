@@ -15,7 +15,7 @@ namespace StocksAPI.Models
             
             modelBuilder.Entity<MonthlyInvestment>(entity =>
             {
-                entity.HasIndex(e => e.MonthYear).IsUnique();
+                //entity.HasIndex(e => e.MonthYear).IsUnique();
                 entity.Property(e => e.MonthYear).HasColumnType("datetime2");
                 
                 entity.Property(e => e.CreatedAt)

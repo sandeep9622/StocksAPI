@@ -64,6 +64,15 @@ namespace StocksAPI.Controllers
                 return BadRequest("Stock is null.");
             }
 
+            // Remove ModelState error for UserId if present
+            if (ModelState.ContainsKey("UserId"))
+                ModelState.Remove("UserId");
+
+            // Remove UserId from ModelState validation errors if present in nested validation
+            if (ModelState.TryGetValue("stock.UserId", out var entry))
+                ModelState.Remove("stock.UserId");
+
+            // Set UserId from token
             stock.UserId = GetCurrentUserId();
             stock.CreatedAt = DateTime.UtcNow;
             
@@ -82,6 +91,11 @@ namespace StocksAPI.Controllers
             {
                 return BadRequest("Stock is null.");
             }
+
+            if (ModelState.ContainsKey("UserId"))
+                ModelState.Remove("UserId");
+            if (ModelState.TryGetValue("stock.UserId", out var entry))
+                ModelState.Remove("stock.UserId");
 
             var userId = GetCurrentUserId();
             var stockToUpdate = _dataRepository.Get(id);
